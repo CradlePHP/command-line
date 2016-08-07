@@ -66,8 +66,6 @@ class Uninstall
 			$cradle = cradle();
 		}
 		
-		$cradle;
-		
 		try {
 			$cradle->package($args[1]);
 		} catch(FrameException $e) {

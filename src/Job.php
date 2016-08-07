@@ -62,13 +62,13 @@ class Job
 			->preprocess(function($request, $response) use (&$args, &$data) {
 				Index::info($args[1] . ' is running');
 				
-				$request->setPost($data);
+				$request->setStage($data);
 				
 				$this->trigger($args[1], $request, $response);
 				
 				//if there was an error
-				if($response->get('body', 'error')) {
-					$error = $response->get('body', 'message');
+				if($response->get('json', 'error')) {
+					$error = $response->get('json', 'message');
 					Index::error('`'.$args[1].'` ' . $error, false);
 					Index::info(json_encode($data, JSON_PRETTY_PRINT));
 					return;
