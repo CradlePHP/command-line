@@ -3,9 +3,10 @@
     "type": "cli",
     "description": "The Cradle command line to manage packages",
 	"minimum-stability": "dev",
+    "homepage": "https://cradlephp.github.io/",
     "keywords": [
-		"cradle", 
-		"cradlephp", 
+		"cradle",
+		"cradlephp",
 		"cli"
 	],
     "license": "MIT",
