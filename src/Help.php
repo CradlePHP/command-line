@@ -30,10 +30,6 @@ class Help
      */
     public function run(array $args)
     {
-        Index::info('Help Menu');
-        Index::info('- `cradle install <*vendor>/<*package>`      Installs a Package');
-        Index::info('- `cradle uninstall <*vendor>/<*package>`    Uninstalls a Package');
-        Index::info('- `cradle job <name*> <data*>`               Executes a job');
-		Index::info('- `cradle queue <name*> <data*>`             Queues a job');
+        Index::info('Usage: `cradle package <vendor/package> <command>`');
     }
 }
