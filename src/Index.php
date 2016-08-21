@@ -20,7 +20,7 @@ class Index
 	 * @var string $stdin
 	 */
 	protected static $stdin = 'php://stdin';
-	
+
     /**
      * @var string|null $cwd The path from where this was called
      */
@@ -49,9 +49,14 @@ class Index
 
         $command = 'help';
 
-        //as in 'eve generate'
         if(isset($args[1])) {
             $command = $args[1];
+        }
+
+        //cradle author/vendor action
+        if(strpos($command, '/') !== false) {
+            $command = 'package';
+            array_splice($args, 1, 0, array($command));
         }
 
         $class = '\\Cradle\\CommandLine\\'.ucwords($command);
