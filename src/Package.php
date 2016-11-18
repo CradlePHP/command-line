@@ -77,6 +77,11 @@ class Package
             })
             ->prepare();
 
+        //case for root packages
+        if(strpos($args[1], '/') === 0) {
+            $args[1] = substr($args[1], 1);
+        }
+
         //simply trigger
         list($author, $package) = explode('/', $args[1], 2);
         $cradle->trigger($author . '-' . $package . '-' . $args[2], $this->cwd, $args);
