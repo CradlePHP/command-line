@@ -45,8 +45,6 @@ class Index
      */
     public function run(array $args)
     {
-        print PHP_EOL;
-
         $command = 'help';
 
         if(isset($args[1])) {
@@ -62,7 +60,9 @@ class Index
         $class = '\\Cradle\\CommandLine\\'.ucwords($command);
 
         if(!class_exists($class)) {
-            self::error('No such command `'.$command.'` found.');
+            //by default it's an event
+            $class = '\\Cradle\\CommandLine\\Event';
+            array_splice($args, 1, 0, array('event'));
         }
 
         array_shift($args);
@@ -169,5 +169,120 @@ class Index
         }
 
         return $answer;
+    }
+
+    /**
+     * PARSE ARGUMENTS
+     *
+     * This command line option parser supports any combination of three types of options
+     * [single character options (`-a -b` or `-ab` or `-c -d=dog` or `-cd dog`),
+     * long options (`--foo` or `--bar=baz` or `--bar baz`)
+     * and arguments (`arg1 arg2`)] and returns a simple array.
+     *
+     * [pfisher ~]$ php test.php --foo --bar=baz --spam eggs
+     *   ["foo"]   => true
+     *   ["bar"]   => "baz"
+     *   ["spam"]  => "eggs"
+     *
+     * [pfisher ~]$ php test.php -abc foo
+     *   ["a"]     => true
+     *   ["b"]     => true
+     *   ["c"]     => "foo"
+     *
+     * [pfisher ~]$ php test.php arg1 arg2 arg3
+     *   [0]       => "arg1"
+     *   [1]       => "arg2"
+     *   [2]       => "arg3"
+     *
+     * [pfisher ~]$ php test.php plain-arg --foo --bar=baz --funny="spam=eggs" --also-funny=spam=eggs \
+     * > 'plain arg 2' -abc -k=value "plain arg 3" --s="original" --s='overwrite' --s
+     *   [0]       => "plain-arg"
+     *   ["foo"]   => true
+     *   ["bar"]   => "baz"
+     *   ["funny"] => "spam=eggs"
+     *   ["also-funny"]=> "spam=eggs"
+     *   [1]       => "plain arg 2"
+     *   ["a"]     => true
+     *   ["b"]     => true
+     *   ["c"]     => true
+     *   ["k"]     => "value"
+     *   [2]       => "plain arg 3"
+     *   ["s"]     => "overwrite"
+     *
+     * Not supported: `-cd=dog`.
+     *
+     * @author              Patrick Fisher <patrick@pwfisher.com>
+     * @since               August 21, 2009
+     * @see                 https://github.com/pwfisher/CommandLine.php
+     * @see                 http://www.php.net/manual/en/features.commandline.php
+     *                      #81042 function arguments($args) by technorati at gmail dot com, 12-Feb-2008
+     *                      #78651 function getArgs($args) by B Crawford, 22-Oct-2007
+     * @usage               $args = CommandLine::parseArgs($_SERVER['argv']);
+     */
+    public static function parseArgs(array $args = null)
+    {
+        $results = array();
+        for ($i = 0, $j = count($args); $i < $j; $i++) {
+            $arg = $args[$i];
+            // --foo --bar=baz
+            if (substr($arg, 0, 2) === '--') {
+                $equalPosition = strpos($arg, '=');
+                // --foo
+                if ($equalPosition === false) {
+                    $key = substr($arg, 2);
+                    // --foo value
+                    if ($i + 1 < $j && $args[$i + 1][0] !== '-') {
+                        $value = $args[$i + 1];
+                        $i++;
+                    } else {
+                        $value = true;
+
+                        if (isset($results[$key])) {
+                            $value = $results[$key];
+                        }
+                    }
+
+                    $results[$key] = $value;
+                // --bar=baz
+                } else {
+                    $key = substr($arg, 2, $equalPosition - 2);
+                    $value = substr($arg, $equalPosition + 1);
+                    $results[$key] = $value;
+                }
+            // -k=value -abc
+            } else if (substr($arg, 0, 1) === '-') {
+                // -k=value
+                if (substr($arg, 2, 1) === '=') {
+                    $key = substr($arg, 1, 1);
+                    $value = substr($arg, 3);
+                    $results[$key] = $value;
+                // -abc
+                } else {
+                    $chars = str_split(substr($arg, 1));
+                    foreach ($chars as $char) {
+                        $key = $char;
+                        $value = isset($results[$key]) ? $results[$key] : true;
+                        $results[$key] = $value;
+                    }
+
+                    // -a value1 -abc value2
+                    if ($i + 1 < $j && $args[$i + 1][0] !== '-') {
+                        $results[$key] = $args[$i + 1];
+                        $i++;
+                    }
+                }
+            } else if (strpos($arg, '=') !== false) {
+                $equalPosition = strpos($arg, '=');
+                $key = substr($arg, 0, $equalPosition);
+                $value = substr($arg, $equalPosition + 1);
+                $results[$key] = $value;
+            // plain-arg
+            } else {
+                $value = $arg;
+                $results[] = $value;
+            }
+        }
+
+        return $results;
     }
 }

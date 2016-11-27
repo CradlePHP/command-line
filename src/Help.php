@@ -30,6 +30,9 @@ class Help
      */
     public function run(array $args)
     {
-        Index::info('Usage: `cradle package <vendor/package> <command>`');
+        Index::info('Usage: `cradle package <vendor/package> <command>`  - Runs a package event');
+        Index::info('Usage: `cradle <vendor/package> <command>`          - Runs a package event');
+        Index::info('Usage: `cradle event <event name> <json|query>`     - Runs an event');
+        Index::info('Usage: `cradle <event name> <json|query>`           - Runs an event');
     }
 }

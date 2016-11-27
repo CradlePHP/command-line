@@ -12,6 +12,9 @@ namespace Cradle\CommandLine;
 use Cradle\Framework\Exception;
 use Cradle\Framework\Decorator;
 
+use Cradle\Http\Request;
+use Cradle\Http\Response;
+
 //enable the function
 Decorator::DECORATE;
 
@@ -23,7 +26,7 @@ Decorator::DECORATE;
  * @author   Christian Blanquera <cblanquera@openovate.com>
  * @standard PSR-2
  */
-class Package
+class Event
 {
     /**
      * @var string|null $cwd The path from where this was called
@@ -54,20 +57,13 @@ class Package
         }
 
         //expecting cradle install cradle/address
-        if(count($args) < 3) {
-            Index::error('Not enough arguments. Usage: cradle package vendor/package command');
+        if(count($args) < 2) {
+            Index::error('Not enough arguments. Usage: cradle event name');
         }
 
         $cradle = cradle();
         if(file_exists($this->cwd . '/bootstrap.php')) {
             include($this->cwd . '/bootstrap.php');
-        }
-
-        try {
-            $cradle->package($args[1]);
-        } catch(Exception $e) {
-            //it means that the package wasn't registered
-            $cradle->register($args[1]);
         }
 
         //Setup a default error handler
@@ -76,16 +72,9 @@ class Package
         });
 
         //prepare data
-        $data = Index::parseArgs(array_slice($args, 3));
+        $event = $args[1];
 
-        //case for root packages
-        if(strpos($args[1], '/') === 0) {
-            $args[1] = substr($args[1], 1);
-        }
-
-        list($author, $package) = explode('/', $args[1], 2);
-
-        $event = $author . '-' . $package . '-' . $args[2];
+        $data = Index::parseArgs(array_slice($args, 2));
 
         //set the the request and response
         $request = $cradle->getRequest();
@@ -119,7 +108,7 @@ class Package
         if ($response->hasContent()) {
             echo $response->getContent();
         } else {
-            Index::info($args[2] .' has successfully completed.');
+            Index::info($args[1] .' has successfully completed.');
         }
 
         //the connection is already closed
