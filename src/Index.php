@@ -16,10 +16,15 @@ namespace Cradle\CommandLine;
  */
 class Index
 {
-	/**
-	 * @var string $stdin
-	 */
-	protected static $stdin = 'php://stdin';
+    /**
+     * @var string $brand
+     */
+    public static $brand = '[cradle]';
+
+    /**
+     * @var string $stdin
+     */
+    protected static $stdin = 'php://stdin';
 
     /**
      * @var string|null $cwd The path from where this was called
@@ -84,7 +89,7 @@ class Index
      */
     public static function info($message)
     {
-        print sprintf("\033[36m%s\033[0m", '[cradle] '.$message);
+        print sprintf("\033[36m%s\033[0m", trim(self::$brand.' '.$message));
         print PHP_EOL;
     }
 
@@ -97,7 +102,7 @@ class Index
      */
     public static function system($message)
     {
-        print sprintf("\033[34m%s\033[0m", '[cradle] '.$message);
+        print sprintf("\033[34m%s\033[0m", trim(self::$brand.' '.$message));
         print PHP_EOL;
     }
 
@@ -110,7 +115,7 @@ class Index
      */
     public static function success($message)
     {
-        print sprintf("\033[32m%s\033[0m", '[cradle] '.$message);
+        print sprintf("\033[32m%s\033[0m", trim(self::$brand.' '.$message));
         print PHP_EOL;
     }
 
@@ -123,7 +128,7 @@ class Index
      */
     public static function error($message, $die = true)
     {
-        print sprintf("\033[31m%s\033[0m", '[cradle] '.$message);
+        print sprintf("\033[31m%s\033[0m", trim(self::$brand.' '.$message));
         print PHP_EOL;
 
         if($die) {
@@ -141,7 +146,7 @@ class Index
      */
     public static function warning($message)
     {
-        print sprintf("\033[33m%s\033[0m", '[cradle] '.$message);
+        print sprintf("\033[33m%s\033[0m", trim(self::$brand.' '.$message));
         print PHP_EOL;
     }
 
