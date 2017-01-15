@@ -76,6 +76,22 @@ class Event
 
         $data = Index::parseArgs(array_slice($args, 2));
 
+        if(isset($data['__json'])) {
+            $json = $data['__json'];
+            unset($data['__json']);
+
+            $data = array_merge(json_decode($json, true), $data);
+        }
+
+        if(isset($data['__query'])) {
+            $query = $data['__query'];
+            unset($data['__query']);
+
+            parse_str($query, $query);
+
+            $data = array_merge($query, $data);
+        }
+
         //set the the request and response
         $request = $cradle->getRequest();
         $response = $cradle->getResponse();
