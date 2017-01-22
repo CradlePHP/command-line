@@ -83,6 +83,14 @@ class Event
             $data = array_merge(json_decode($json, true), $data);
         }
 
+        if(isset($data['__json64'])) {
+            $base64 = $data['__json64'];
+            unset($data['__json64']);
+
+            $json = base64_decode($base64);
+            $data = array_merge(json_decode($json, true), $data);
+        }
+
         if(isset($data['__query'])) {
             $query = $data['__query'];
             unset($data['__query']);
