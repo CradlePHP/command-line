@@ -76,14 +76,14 @@ class Event
 
         $data = Index::parseArgs(array_slice($args, 2));
 
-        if(isset($data['__json'])) {
+        if (isset($data['__json'])) {
             $json = $data['__json'];
             unset($data['__json']);
 
             $data = array_merge(json_decode($json, true), $data);
         }
 
-        if(isset($data['__json64'])) {
+        if (isset($data['__json64'])) {
             $base64 = $data['__json64'];
             unset($data['__json64']);
 
@@ -91,7 +91,7 @@ class Event
             $data = array_merge(json_decode($json, true), $data);
         }
 
-        if(isset($data['__query'])) {
+        if (isset($data['__query'])) {
             $query = $data['__query'];
             unset($data['__query']);
 
