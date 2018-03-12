@@ -1,3 +1,5 @@
+> Deprecation Notice: This project has been moved to https://github.com/CradlePHP/framework
+
 # Cradle the Meta Framework
 
 [![Travis CI](https://travis-ci.org/CradlePHP/framework.svg?branch=master)](https://travis-ci.org/CradlePHP/framework)
